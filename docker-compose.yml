@@ -17,14 +17,27 @@ services:
 
   api:
     build: .
+    # The image's default command runs `alembic upgrade head` and then starts uvicorn.
     environment:
       DATABASE_URL: postgresql+psycopg://geo:geo@db:5432/geo
       UPLOAD_DIR: /app/data/uploads
+      MAX_UPLOAD_SIZE_MB: 20
+      MAX_UNCOMPRESSED_ZIP_MB: 100
+      LOG_LEVEL: INFO
     ports:
       - "8000:8000"
+    volumes:
+      - uploads:/app/data/uploads
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
 
 volumes:
   pgdata:
+  uploads:
