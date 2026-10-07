@@ -1,0 +1,10 @@
+[project]
+name = "geospatial-measurement-api"
+version = "0.1.0"
+description = "Upload GeoJSON / Shapefile data and get area, length and bounding-box measurements."
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
