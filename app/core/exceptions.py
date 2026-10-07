@@ -86,6 +86,14 @@ class NoValidGeometriesError(ProcessingError):
     code = "NO_VALID_GEOMETRIES"
 
 
+class InvalidCoordinatesError(ProcessingError):
+    code = "INVALID_COORDINATES"
+
+
+class ExtentTooLargeError(ProcessingError):
+    code = "EXTENT_TOO_LARGE"
+
+
 # --- Storage ---
 
 class StorageError(AppError):

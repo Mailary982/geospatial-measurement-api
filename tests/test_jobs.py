@@ -174,3 +174,13 @@ def test_result_of_unknown_job_returns_404(client):
 
     assert response.status_code == 404
     assert response.json()["error"]["code"] == "JOB_NOT_FOUND"
+
+
+def test_mislabelled_projected_coordinates_fail_with_clear_message(client):
+    # Metre coordinates in a GeoJSON with no "crs" member (so it defaults to WGS84).
+    job_id = submit(client, polygon((500000, 1400000), (500100, 1400000), (500100, 1400100), (500000, 1400000)))
+
+    body = client.get(f"{JOBS_URL}/{job_id}").json()
+
+    assert body["status"] == "FAILED"
+    assert "outside the valid longitude/latitude range" in body["error_message"]

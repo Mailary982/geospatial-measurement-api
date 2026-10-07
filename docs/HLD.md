@@ -178,7 +178,8 @@ measure:
 ```
 
 ### Documented assumptions / limits
-- UTM is accurate to well under 0.1% inside its 6°-wide zone. Datasets spanning several zones (country/continent scale) will have growing error. A future improvement is geodesic measurement with `pyproj.Geod`.
+- UTM is accurate to well under 0.1% inside its 6°-wide zone, and error grows away from the zone. Lon/lat (or Web Mercator) data wider than **12° of longitude** is rejected (`EXTENT_TOO_LARGE`) instead of being measured with large silent errors. Such data includes antimeridian-crossing data, which planar GeoJSON represents as ~340° wide. At the limit the error is ≤ ~0.5% for length and ~1% for area. A future improvement is geodesic measurement with `pyproj.Geod`.
+- Lon/lat data whose coordinates fall outside ±180 / ±90 is rejected (`INVALID_COORDINATES`). This usually means projected metre coordinates were written into a GeoJSON without a `crs` member.
 - UTM is undefined beyond 84°N / 80°S. Such data fails with a clear error.
 - A projected source CRS is trusted as given. Web Mercator (EPSG:3857) is **projected but heavily distorted**, so we treat 3857 like geographic data and re-project to UTM. This is a single explicit special case.
 - Values are rounded to 3 decimals in responses.
@@ -326,6 +327,8 @@ AppError(code, message, http_status)          # base, in core/exceptions.py
      ├─ FileParseError             "Could not read file as GeoJSON/Shapefile"
      ├─ MissingCRSError
      ├─ UnsupportedCRSError
+     ├─ InvalidCoordinatesError     lon/lat values out of range
+     ├─ ExtentTooLargeError         wider than one UTM zone can measure accurately
      └─ NoValidGeometriesError
 ```
 
@@ -439,7 +442,7 @@ Notes:
 ## 15. Known limitations (to put in README)
 
 1. `BackgroundTasks` runs in the API process. If the process restarts mid-job, that job stays `QUEUED`/`PROCESSING` and there are no retries. A real deployment would use a queue (Celery/RQ) for durability.
-2. UTM-based measurement loses accuracy for data spanning many UTM zones, and fails near the poles.
+2. UTM-based measurement: lon/lat data wider than 12° of longitude, or near the poles, is rejected instead of measured.
 3. Only GeoJSON and zipped Shapefile are supported. A zip must contain exactly one shapefile.
 4. Invalid geometries are skipped, not repaired.
 5. Uploaded files are never cleaned up.
