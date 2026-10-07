@@ -1,0 +1,15 @@
+from typing import Any
+
+from pydantic import BaseModel
+
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+    details: Any = None
+
+
+class ErrorResponse(BaseModel):
+    """Shape of every error response: {"error": {"code", "message", "details"}}."""
+
+    error: ErrorDetail

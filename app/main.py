@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI
 
+from app.api.error_handlers import register_exception_handlers
 from app.api.routes import health
 from app.core.config import get_settings
 
@@ -18,6 +19,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         description="Upload a GeoJSON or zipped Shapefile and get area, length and bounding-box measurements.",
     )
+    register_exception_handlers(app)
     app.include_router(health.router)
     return app
 
