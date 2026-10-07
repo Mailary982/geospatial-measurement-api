@@ -6,7 +6,13 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.core.exceptions import AppError, NoValidGeometriesError
+from app.core.exceptions import (
+    AppError,
+    JobFailedError,
+    JobNotCompletedError,
+    JobNotFoundError,
+    NoValidGeometriesError,
+)
 from app.db.models import GeospatialJob, JobStatus, MeasurementResult
 from app.services.file_validation import ValidatedUpload
 from app.services.geo_reader import (
@@ -43,6 +49,29 @@ def create_job(db: Session, storage: StorageBackend, upload: ValidatedUpload) ->
         db.rollback()
         storage.delete(storage_key)  # don't leave an orphaned file behind
         raise
+    return job
+
+
+def get_job(db: Session, job_id: uuid.UUID) -> GeospatialJob:
+    job = db.get(GeospatialJob, job_id)
+    if job is None:
+        raise JobNotFoundError(f"Job {job_id} was not found.")
+    return job
+
+
+def get_completed_job(db: Session, job_id: uuid.UUID) -> GeospatialJob:
+    """Return the job only if its measurements are available."""
+    job = get_job(db, job_id)
+    if job.status == JobStatus.FAILED:
+        raise JobFailedError(
+            f"Job failed: {job.error_message}",
+            details={"status": job.status, "error_message": job.error_message},
+        )
+    if job.status != JobStatus.COMPLETED or job.result is None:
+        raise JobNotCompletedError(
+            f"Job is {job.status}; the result is available once it is COMPLETED.",
+            details={"status": job.status},
+        )
     return job
 
 

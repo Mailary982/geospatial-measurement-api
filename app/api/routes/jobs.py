@@ -1,10 +1,12 @@
+import uuid
+
 from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.api.deps import get_db, get_session_factory, get_storage
 from app.core.config import Settings, get_settings
 from app.schemas.errors import ErrorResponse
-from app.schemas.jobs import JobCreatedResponse
+from app.schemas.jobs import JobCreatedResponse, JobResultResponse, JobStatusResponse
 from app.services import job_service
 from app.services.file_validation import validate_upload
 from app.services.storage import StorageBackend
@@ -46,3 +48,26 @@ def create_job(
         status_url=f"{API_PREFIX}/jobs/{job.id}",
         result_url=f"{API_PREFIX}/jobs/{job.id}/result",
     )
+
+
+@router.get(
+    "/jobs/{job_id}",
+    response_model=JobStatusResponse,
+    summary="Get a job's processing status",
+    responses={404: {"model": ErrorResponse, "description": "Unknown job"}},
+)
+def get_job_status(job_id: uuid.UUID, db: Session = Depends(get_db)) -> JobStatusResponse:
+    return JobStatusResponse.from_job(job_service.get_job(db, job_id))
+
+
+@router.get(
+    "/jobs/{job_id}/result",
+    response_model=JobResultResponse,
+    summary="Get the measurements of a completed job",
+    responses={
+        404: {"model": ErrorResponse, "description": "Unknown job"},
+        409: {"model": ErrorResponse, "description": "Job not completed yet, or failed"},
+    },
+)
+def get_job_result(job_id: uuid.UUID, db: Session = Depends(get_db)) -> JobResultResponse:
+    return JobResultResponse.from_job(job_service.get_completed_job(db, job_id))
