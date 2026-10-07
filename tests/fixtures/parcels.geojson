@@ -1,0 +1,73 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "Parcel A"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.5,
+              12.9
+            ],
+            [
+              77.51,
+              12.9
+            ],
+            [
+              77.51,
+              12.91
+            ],
+            [
+              77.5,
+              12.91
+            ],
+            [
+              77.5,
+              12.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "Parcel B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.52,
+              12.9
+            ],
+            [
+              77.525,
+              12.9
+            ],
+            [
+              77.525,
+              12.905
+            ],
+            [
+              77.52,
+              12.905
+            ],
+            [
+              77.52,
+              12.9
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "Parcel"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.5,
+              12.9
+            ],
+            [
+              77.51,
+              12.9
+            ],
+            [
+              77.51,
+              12.91
+            ],
+            [
+              77.5,
+              12.91
+            ],
+            [
+              77.5,
+              12.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "Road"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.5,
+            12.95
+          ],
+          [
+            77.51,
+            12.95
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "name": "Landmark"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5946,
+          12.9716
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "name": "Bow-tie (self-intersecting)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.5,
+              12.92
+            ],
+            [
+              77.51,
+              12.93
+            ],
+            [
+              77.51,
+              12.92
+            ],
+            [
+              77.5,
+              12.93
+            ],
+            [
+              77.5,
+              12.92
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "name": "Missing geometry"
+      },
+      "geometry": null
+    }
+  ]
+}

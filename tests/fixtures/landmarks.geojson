@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "Landmark 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5946,
+          12.9716
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "Landmark 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.6101,
+          12.9592
+        ]
+      }
+    }
+  ]
+}

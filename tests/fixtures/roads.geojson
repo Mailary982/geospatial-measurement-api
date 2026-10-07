@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "Road 1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.5,
+            12.95
+          ],
+          [
+            77.51,
+            12.95
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "Road 2"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.5,
+            12.95
+          ],
+          [
+            77.5,
+            12.96
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "name": "Ring road"
+      },
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              77.52,
+              12.95
+            ],
+            [
+              77.53,
+              12.95
+            ]
+          ],
+          [
+            [
+              77.53,
+              12.95
+            ],
+            [
+              77.53,
+              12.96
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
