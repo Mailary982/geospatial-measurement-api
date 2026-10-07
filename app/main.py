@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 
 from app.api.error_handlers import register_exception_handlers
-from app.api.routes import health
+from app.api.routes import health, jobs
 from app.core.config import get_settings
 
 
@@ -21,6 +21,7 @@ def create_app() -> FastAPI:
     )
     register_exception_handlers(app)
     app.include_router(health.router)
+    app.include_router(jobs.router)
     return app
 
 
