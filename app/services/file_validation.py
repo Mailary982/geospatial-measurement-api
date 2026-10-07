@@ -134,7 +134,7 @@ def check_shapefile_zip(data: bytes, max_uncompressed_bytes: int, max_uncompress
         with zipfile.ZipFile(io.BytesIO(data)) as archive:
             members = [
                 info for info in archive.infolist()
-                if not info.is_dir() and not _is_os_metadata(info.filename)
+                if not info.is_dir() and not is_os_metadata(info.filename)
             ]
             # Zip-bomb guard: check the declared uncompressed size before decompressing anything.
             if sum(info.file_size for info in members) > max_uncompressed_bytes:
@@ -153,14 +153,21 @@ def check_shapefile_zip(data: bytes, max_uncompressed_bytes: int, max_uncompress
     _check_shapefile_members([info.filename for info in members])
 
 
-def _check_shapefile_members(names: list[str]) -> None:
-    shp_files = [name for name in names if name.lower().endswith(".shp")]
+def find_shapefile_member(names: list[str]) -> str:
+    """Return the single .shp entry in a ZIP's member list (ignoring OS metadata files)."""
+    shp_files = [
+        name for name in names
+        if name.lower().endswith(".shp") and not is_os_metadata(name)
+    ]
     if not shp_files:
         raise InvalidFileError("ZIP does not contain a .shp file.")
     if len(shp_files) > 1:
         raise InvalidFileError(f"ZIP must contain exactly one shapefile; found {len(shp_files)}.")
+    return shp_files[0]
 
-    base = shp_files[0][: -len(".shp")].lower()
+
+def _check_shapefile_members(names: list[str]) -> None:
+    base = find_shapefile_member(names)[: -len(".shp")].lower()
     present = {name.lower() for name in names}
     missing = [ext for ext in SHAPEFILE_REQUIRED_COMPANIONS if base + ext not in present]
     if missing:
@@ -171,6 +178,6 @@ def _check_shapefile_members(names: list[str]) -> None:
         )
 
 
-def _is_os_metadata(name: str) -> bool:
+def is_os_metadata(name: str) -> bool:
     """macOS adds __MACOSX/ folders and ._ files when zipping; ignore them."""
     return name.startswith("__MACOSX/") or PurePosixPath(name).name.startswith("._")

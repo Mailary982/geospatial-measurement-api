@@ -1,6 +1,9 @@
 import io
 import json
 import zipfile
+from pathlib import Path
+
+import geopandas as gpd
 
 
 def make_zip(members: dict[str, bytes]) -> bytes:
@@ -11,7 +14,7 @@ def make_zip(members: dict[str, bytes]) -> bytes:
     return buffer.getvalue()
 
 
-def feature_collection(*geometries: dict, crs: str | None = None) -> dict:
+def feature_collection(*geometries: dict | None, crs: str | None = None) -> dict:
     collection = {
         "type": "FeatureCollection",
         "features": [
@@ -25,5 +28,32 @@ def feature_collection(*geometries: dict, crs: str | None = None) -> dict:
     return collection
 
 
-def geojson_bytes(*geometries: dict, crs: str | None = None) -> bytes:
+def geojson_bytes(*geometries: dict | None, crs: str | None = None) -> bytes:
     return json.dumps(feature_collection(*geometries, crs=crs)).encode()
+
+
+def shapefile_zip_bytes(
+    gdf: gpd.GeoDataFrame, work_dir: Path, folder: str = "", drop: tuple[str, ...] = ()
+) -> bytes:
+    """Write `gdf` as a shapefile and return it zipped (optionally inside `folder`, minus `drop` extensions)."""
+    shp_dir = work_dir / "shapefile"
+    shp_dir.mkdir(parents=True, exist_ok=True)
+    gdf.to_file(shp_dir / "data.shp")
+    members = {
+        f"{folder}{path.name}": path.read_bytes()
+        for path in sorted(shp_dir.iterdir())
+        if path.suffix not in drop
+    }
+    return make_zip(members)
+
+
+def polygon(*ring: tuple[float, float]) -> dict:
+    return {"type": "Polygon", "coordinates": [[list(point) for point in ring]]}
+
+
+def line(*points: tuple[float, float]) -> dict:
+    return {"type": "LineString", "coordinates": [list(point) for point in points]}
+
+
+def point(x: float, y: float) -> dict:
+    return {"type": "Point", "coordinates": [x, y]}
